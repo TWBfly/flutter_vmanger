@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vmanger/entity/login_entity.dart';
+import 'package:flutter_vmanger/http/http.dart';
 import 'package:flutter_vmanger/model/login_model.dart';
 
 import 'package:flutter_vmanger/model/timer_model.dart';
@@ -27,16 +28,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   TextEditingController phoneController;
 
   TextEditingController verificationCodeController;
-
-//  getLoginSuccessStatus() async {
-//    SharedPreferences prefs = await SharedPreferences.getInstance();
-//    bool status = prefs.getBool(loginSuccessStatus) ?? false;
-//    print("status:$status");
-//    if(status){
-//      Navigator.pushNamed(context, tab_navigator);
-//    }
-//    return status;
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,11 +202,16 @@ class _LoginWidgetState extends State<LoginWidget> {
         //登录
         smsLogin(phoneController.text,verificationCodeController.text).then((value){
           if(value.code == 200){
-            saveLoginInfo(value.data.toString());
             saveLoginSuccessStatus(true);
             showToast(context, "登录成功");
-            //保存成功之后 跳转
-            Navigator.pushNamed(context, tab_navigator);
+            var data = value.data;
+            saveLoginInfo(data.systemName,data.systemId,data.id,data.iconUrl,data.token,data.realName,data.positionName).then((_){
+              //保存成功之后 跳转
+              dio.options.headers["token"] = data.token;
+//              Navigator.pushNamed(context, tab_navigator);
+              Navigator.pushReplacementNamed(context, tab_navigator);
+            });
+
           }else{
             saveLoginSuccessStatus(false);
             showToast(context, value.message);
@@ -243,14 +239,18 @@ class _LoginWidgetState extends State<LoginWidget> {
     super.dispose();
   }
 
-  saveLoginInfo(String data) async {
+  ///酒店名称 systemId userId iconUrl token realName 职位名称
+  saveLoginInfo(String systemName,int systemId,int userId,String iconUrl,String token,String realName,String positionName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(loginInfo, data);
+    await prefs.setString(loginInfoSystemName, systemName);
+    await prefs.setInt(loginInfoSystemId, systemId);
+    await prefs.setInt(loginInfoUserId, userId);
+    await prefs.setString(loginInfoIconUrl, iconUrl);
+    await prefs.setString(loginInfoToken, token);
+    await prefs.setString(loginInfoRealName, realName);
+    await prefs.setString(loginInfoPositionName, positionName);
+
   }
 
-  ///保存登录成功状态
-  saveLoginSuccessStatus(bool status) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(loginSuccessStatus, status);
-  }
+
 }

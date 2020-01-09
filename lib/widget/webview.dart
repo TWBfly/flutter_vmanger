@@ -8,7 +8,7 @@ class WebViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text(title)),),
+      appBar: title==null?null:AppBar(title: Center(child: Text(title)),),
       body: WebView(
         initialUrl: url,
         javascriptMode: JavascriptMode.unrestricted,

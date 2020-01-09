@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_vmanger/event/time_save_event.dart';
 import 'package:flutter_vmanger/util/date_format/date_format_base.dart';
 import 'package:flutter_vmanger/util/show_toast.dart';
+import 'package:flutter_vmanger/event/event_bus.dart';
 ///选择时间
 class SelectTimeWidget extends StatefulWidget {
   @override
@@ -114,6 +116,10 @@ class _SelectTimeWidgetState extends State<SelectTimeWidget> {
     Map<String, dynamic> map = Map();
     map["startTime"] = startTimeText.isEmpty?todayTimeText:startTimeText;
     map["endTime"] = endTimeText.isEmpty?todayTimeText:endTimeText;
+
+    //发送EventBus
+//    eventBus.fire(TimeSaveEvent("时间保存成功"));
+
     Navigator.pop(context,map);
   }
 }

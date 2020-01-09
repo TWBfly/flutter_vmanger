@@ -126,7 +126,7 @@ class _MyPageState extends State<MyPage> {
           color: Colors.white,
           child: ListView.separated(
             shrinkWrap: true,
-            itemCount: 7,
+            itemCount: titleList.length,
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                 onTap: () {
