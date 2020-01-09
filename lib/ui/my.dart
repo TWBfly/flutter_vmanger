@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vmanger/util/colors.dart';
+import 'package:flutter_vmanger/util/routes_name.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MyPage extends StatefulWidget {
@@ -81,24 +82,30 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
 
-        ///
+        ///我的活动  我的关注
         Container(
           color: Colors.white,
           height: 90,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    "images/icon_reserve.png",
-                    width: 30,
-                    height: 30,
-                  ),
-                  Text("我的活动"),
-                ],
+              GestureDetector(
+                child:  Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      "images/icon_reserve.png",
+                      width: 30,
+                      height: 30,
+                    ),
+                    Text("我的活动"),
+                  ],
+                ),
+                onTap: (){
+                  myActivity();
+                },
               ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
                 child: VerticalDivider(
@@ -268,4 +275,10 @@ class _MyPageState extends State<MyPage> {
       _image = image;
     });
   }
+
+  ///我的活动
+  void myActivity() {
+    Navigator.pushNamed(context, my_activity);
+  }
 }
+

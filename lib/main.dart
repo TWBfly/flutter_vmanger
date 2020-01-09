@@ -7,6 +7,7 @@ import 'package:flutter_vmanger/http/http.dart';
 import 'package:flutter_vmanger/ui/activity_list.dart';
 import 'package:flutter_vmanger/ui/home.dart';
 import 'package:flutter_vmanger/ui/login.dart';
+import 'package:flutter_vmanger/ui/my_activity.dart';
 import 'package:flutter_vmanger/ui/select_time.dart';
 import 'package:flutter_vmanger/ui/tab_navigator.dart';
 import 'package:flutter_vmanger/ui/un_known_page.dart';
@@ -31,9 +32,30 @@ class MyApp extends StatelessWidget {
         home_page: (context) => HomePage(),
         select_time_page: (context) => SelectTimeWidget(),
         activity_list: (context) => ActivityListPage(),
+        my_activity: (context) => MyActivity(),
       },
       onUnknownRoute: (RouteSettings setting) => MaterialPageRoute(builder: (context) => UnKnownPage()),
-      home: MyHomePage(),
+      home: FutureBuilder<bool>(
+            future: getSP(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              switch(snapshot.connectionState){
+                case ConnectionState.none:
+                  return LoginWidget();
+                  break;
+                case ConnectionState.waiting:
+                  return Center(child: CircularProgressIndicator());
+                  break;
+                case ConnectionState.active:
+                  return Center(child: CircularProgressIndicator());
+                  break;
+                case ConnectionState.done:
+                  print("是否登录:${snapshot.data}");
+                  return snapshot.data? MyHomePage(): LoginWidget();
+                  break;
+              }
+              return LoginWidget();
+            },
+          )
     );
   }
 }
@@ -94,27 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     print("===========================mian build==========================");
     return TabNavigator();
-//    return FutureBuilder<bool>(
-//      future: getSP(),
-//      builder: (BuildContext context, AsyncSnapshot snapshot) {
-//        switch(snapshot.connectionState){
-//          case ConnectionState.none:
-//            return LoginWidget();
-//            break;
-//          case ConnectionState.waiting:
-//            return Center(child: CircularProgressIndicator());
-//            break;
-//          case ConnectionState.active:
-//            return Center(child: CircularProgressIndicator());
-//            break;
-//          case ConnectionState.done:
-//            print("是否登录:${snapshot.data}");
-//            return snapshot.data? TabNavigator(): LoginWidget();
-//            break;
-//        }
-//        return LoginWidget();
-//      },
-//    );
+
   }
 
 

@@ -16,3 +16,5 @@ final String GET_MEETINGLIST = "/meeting/getMeetingList";
 final String FOLLOW_USER_MEETING = "/meeting/followUserMeeting";
 //取消关注
 final String CANCEL_USER_MEETING = "/meeting/cancelUserMeeting";
+//我的活动
+final String MY_ALL_MEETINGS = "/meeting/myAllMeetings";

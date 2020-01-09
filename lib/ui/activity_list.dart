@@ -38,7 +38,12 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
   int curPage = 1;
   int pageSize = 20;
 
+
+
   List<GetmeetingListDataElemants> elements;
+
+  String startDate;
+  String endDate;
 
 
   @override
@@ -47,11 +52,13 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
     _customScrollViewController.addListener((){
       if (_customScrollViewController.position.pixels == _customScrollViewController.position.maxScrollExtent){
         print('滑动到了最底部,加载更多');
-        //        _getMore();
+                _getMore();
       }
     });
 
     _getMeetingCompleteData(monthStartDate(),monthEndDate());
+     startDate = monthStartDate();
+     endDate = monthStartDate();
     _getMeetingList(monthStartDate(),monthEndDate(),curPage,pageSize);
 
     super.initState();
@@ -284,6 +291,8 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
     isSelectYear = false;
     isSelectTime = false;
     curPage = 1;
+    startDate = todayStartDate();
+    endDate = todayEndDate();
     _getMeetingList(todayStartDate(),todayEndDate(),curPage,pageSize);
   }
 
@@ -303,6 +312,8 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
         var endTime = map["endTime"];
         selectText = "起$startTime\n止$endTime";
         curPage = 1;
+        startDate = startTime+startEnd;
+        endDate = endTime+endEnd;
         _getMeetingList(startTime+startEnd,endTime+endEnd,curPage,pageSize);
         print("startTime:$startTime");
         print("endTime:$endTime");
@@ -351,7 +362,12 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
                                 Text(element.meetingName),
                                 Padding(
                                   padding: const EdgeInsets.only(left:10.0),
-                                  child: Image.asset("images/icon_status1.png",width: 50,height: 25,),
+                                  child: element.meetingStatus =="进行中"?Image.asset("images/icon_status1.png",width: 50,height: 25,)
+                                      :element.meetingStatus =="会前"?Image.asset("images/icon_status2.png",width: 50,height: 25,)
+                                      :element.meetingStatus =="待办"?Image.asset("images/icon_status3.png",width: 50,height: 25,)
+                                      :element.meetingStatus =="会前申请"?Image.asset("images/icon_status4.png",width: 50,height: 25,)
+                                      :element.meetingStatus =="已结束"?Image.asset("images/icon_status5.png",width: 50,height: 25,)
+                                      :element.meetingStatus =="已取消"?Image.asset("images/icon_status6.png",width: 50,height: 25,):Image.asset("images/icon_status6.png",width: 50,height: 25,)
                                 ),
                               ],
                             ),
@@ -435,8 +451,9 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
   }
 
   ///下拉刷新
-  Future<void> _onRefresh() {
-    print("_onRefresh");
+  Future<void> _onRefresh() async {
+    curPage= 1;
+   return _getMeetingList(startDate,endDate,curPage,pageSize);
   }
 
   ///总计 已完成 待完成
@@ -464,7 +481,12 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
 
           });
           if(data!=null && data.isNotEmpty){
-            this.elements = data;
+            if(curPage == 1){
+              this.elements = data;
+            }else{
+              elements.addAll(data);
+            }
+
           }else{
             //空布局
             var getmeetingListDataElemants= GetmeetingListDataElemants();
@@ -495,6 +517,12 @@ class _ActivityListPageState extends State<ActivityListPage> with TickerProvider
         ],
       ),
     );
+  }
+
+  ///加载更多
+  void _getMore() {
+    curPage = curPage+1;
+    _getMeetingList(startDate,endDate,curPage,pageSize);
   }
 }
 
